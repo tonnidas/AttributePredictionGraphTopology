@@ -80,21 +80,6 @@ def accuracyMeasurement(Test_True_Labels, predicted_labels):
         if Test_True_Labels[i] == predicted_labels[i]:
             matched = matched + 1
     accuracy = (matched / len(Test_True_Labels)) * 100
-
-    # confusion_matrix = dict()
-    # for i in range(len(Test_True_Labels)):
-    #     actual = Test_True_Labels[i] 
-    #     predicted = predicted_labels[i]
-    #     if (actual, predicted) not in confusion_matrix:
-    #         confusion_matrix[(actual, predicted)] = 0
-    #     confusion_matrix[(actual, predicted)] = confusion_matrix[(actual, predicted)] + 1
-
-    # total, matched = 0, 0
-    # for each_key in confusion_matrix:
-    #     total = total + confusion_matrix[each_key]
-    #     if each_key[0] == each_key[1]: matched = matched + 1
-
-    # accuracy = (matched / total) * 100
     return accuracy
 # ----------------------------------------
 
