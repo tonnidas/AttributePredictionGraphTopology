@@ -24,6 +24,6 @@ selected_features = '1'                             # '1' or '2' or '3' or '4' o
 # ----------------------------------------
 featuresDf, y = get_settings(dataset_attributes, dataset_edges, model, predicting_attribute, prediction_type, selected_features)
 # ----------------------------------------
-result = predict_attribute(featuresDf, y, model)
+result = predict_attribute(featuresDf, y, model, prediction_type)
 print('result: ', result)
 # ----------------------------------------

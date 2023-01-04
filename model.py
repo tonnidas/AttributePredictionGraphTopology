@@ -12,7 +12,7 @@ from sklearn.neighbors import KNeighborsClassifier
 from sklearn.pipeline import make_pipeline
 from sklearn.preprocessing import StandardScaler
 from sklearn.svm import SVC
-from metrics import accuracyMeasurement
+from metrics import accuracyMeasurement, classification_metrics
 
 
 # ----------------------------------------
@@ -38,14 +38,15 @@ def SVM(X_train, X_test, y_train, y_test):
     # ----------------------------------------
 
 
-def predict_attribute(featuresDf, y, model):
+def predict_attribute(featuresDf, y, model, prediction_type):
     X_train, X_test, y_train, y_test = train_test_split(featuresDf, y, random_state=104, test_size=0.30, shuffle=True)
 
     # If model == 'SVM':
     predicted_labels_svm = SVM(X_train, X_test, y_train, y_test)
 
-    accuracy_svm = accuracyMeasurement(y_test.tolist(), predicted_labels_svm)
-    # print("svm accuracy", accuracy_svm)
+    if prediction_type == 'classification':
+        acc, f1_macro, precision_macro, recall_macro, f1_micro, precision_micro, recall_micro, f1_weighted, adj_RI = classification_metrics(y_test.tolist(), predicted_labels_svm)
+    print("acc: ", acc, "f1_macro: ", f1_macro, "precision_macro: ", precision_macro, "recall_macro: ", recall_macro, "f1_micro: ", f1_micro, "precision_micro: ", precision_micro, "recall_micro: ", recall_micro, "f1_weighted: ", f1_weighted, "adj_RI: ", adj_RI)
 
-    return accuracy_svm
+    return acc, f1_macro, precision_macro, recall_macro, f1_micro, precision_micro, recall_micro, f1_weighted, adj_RI
 
