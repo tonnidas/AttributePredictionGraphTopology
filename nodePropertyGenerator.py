@@ -49,7 +49,7 @@ def getNodeProperties(G):
 
 # read edges and attributes from pickle (full dataset)
 # with open('pickles/edges.pickle', 'rb') as handle: data = pickle.load(handle)
-with open('pickles/attributes.pickle', 'rb') as handle: y = pickle.load(handle) 
+# with open('pickles/attributes.pickle', 'rb') as handle: y = pickle.load(handle) 
 
 # read edges from pickle (small dataset)
 # with open('pickles/playGraph_edges.pickle', 'rb') as handle: data = pickle.load(handle)  
@@ -65,25 +65,25 @@ with open('pickles/attributes.pickle', 'rb') as handle: y = pickle.load(handle)
 # with open('pickles/adj_and_property_features.pickle', 'wb') as handle: pickle.dump(featuresDf, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
 # load generated features
-with open('pickles/adj_and_property_features.pickle', 'rb') as handle: featuresDf = pickle.load(handle) 
+# with open('pickles/adj_and_property_features.pickle', 'rb') as handle: featuresDf = pickle.load(handle) 
 
-y = y['Gender']
-featuresDf.columns = featuresDf.columns.astype(str)
+# y = y['Gender']
+# featuresDf.columns = featuresDf.columns.astype(str)
 
-print(y.shape)
-print(featuresDf.shape)
+# print(y.shape)
+# print(featuresDf.shape)
 
-X_train, X_test, y_train, y_test = train_test_split(featuresDf, y, random_state=104, test_size=0.30, shuffle=True)
+# X_train, X_test, y_train, y_test = train_test_split(featuresDf, y, random_state=104, test_size=0.30, shuffle=True)
 
 # ----------------------------------------
 # Accuracy finding by svm method
-print('running svm')
-predicted_labels_svm = svmClassifier(X_train, X_test, y_train)
-print('svm completed')
+# print('running svm')
+# predicted_labels_svm = svmClassifier(X_train, X_test, y_train)
+# print('svm completed')
 
 # print("svm predicted labels:", predicted_labels_svm)
 # print("true labels:", y_test.tolist())
 
-accuracy_svm = accuracyMeasurement(y_test.tolist(), predicted_labels_svm)
-print("svm accuracy", accuracy_svm)
+# accuracy_svm = accuracyMeasurement(y_test.tolist(), predicted_labels_svm)
+# print("svm accuracy", accuracy_svm)
 # ----------------------------------------

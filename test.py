@@ -64,20 +64,20 @@ def getNodeProperties(G):
 # -------------------------
 ### Prepare small dataset
 
-# with open('pickles/edges.pickle', 'rb') as handle: data = pickle.load(handle)
-# print(data)
-# data = data[(data['From'] < 100) & (data['To'] < 100)]
+with open('pickles/edges.pickle', 'rb') as handle: data = pickle.load(handle)
+print(data)
+data = data[(data['From'] < 100) & (data['To'] < 100)]
 
-# for i in range(100):
-#     data = data.append({'From': i, 'To': i}, ignore_index = True)
-# print(data)
-# with open('pickles/playGraph_edges.pickle', 'wb') as handle: pickle.dump(data, handle, protocol=pickle.HIGHEST_PROTOCOL)
+for i in range(100):
+    data = data.append({'From': i, 'To': i}, ignore_index = True)
+print(data)
+with open('pickles/playGraph_edges.pickle', 'wb') as handle: pickle.dump(data, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
-# with open('pickles/attributes.pickle', 'rb') as handle: data = pickle.load(handle)
-# print(data)
-# data = data[0:100]
-# print(data)
-# with open('pickles/playGraph_attributes.pickle', 'wb') as handle: pickle.dump(data, handle, protocol=pickle.HIGHEST_PROTOCOL)
+with open('pickles/attributes.pickle', 'rb') as handle: data = pickle.load(handle)
+print(data)
+data = data[0:100]
+print(data)
+with open('pickles/playGraph_attributes.pickle', 'wb') as handle: pickle.dump(data, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
 with open('pickles/playGraph_edges.pickle', 'rb') as handle: data = pickle.load(handle)
 print(data)
