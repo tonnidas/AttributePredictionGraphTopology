@@ -32,7 +32,11 @@ def getNodeProperties(G):
     print('calculating clustering_coefficient')
     df3 = pd.DataFrame.from_dict(nx.clustering(G), orient='index', columns=['clustering_coefficient'])
 
-    # print('calculating eccentricity')
+    print('calculating eccentricity')
+    print("Is G connected? = ", nx.is_connected(G))
+    print("How many components? = ", nx.number_connected_components(G))
+    # returns list of nodes in different connected components
+    print(list(nx.connected_components(G)))
     # df4 = pd.DataFrame.from_dict(nx.eccentricity(G), orient='index', columns=['eccentricity'])
 
     print('calculating closeness_centrality')
