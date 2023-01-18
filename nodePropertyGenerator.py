@@ -20,6 +20,11 @@ from helperMethods import *
 
 
 # ----------------------------------------
+# Params:
+#   G = networkx graph
+# Return values:
+#   features = all generated topological features (concatenated in a dataframe)
+# Generate degree, degree_centrality, clustering_coefficient, eccentricity, closeness_centrality, betweenness_centrality of G
 def getNodeProperties(G):
     print('calculating degree')
     temp_dict = dict(G.degree)
@@ -52,8 +57,8 @@ def getNodeProperties(G):
     df6 = pd.DataFrame.from_dict(nx.betweenness_centrality(G), orient='index', columns=['betweenness_centrality'])
 
     print('done calculating node properties')
-
-    return pd.concat([df1, df2, df3, df4, df5, df6], axis=1)
+    features = pd.concat([df1, df2, df3, df4, df5, df6], axis=1)
+    return features
 # ----------------------------------------
 
 
