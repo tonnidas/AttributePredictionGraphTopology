@@ -2,8 +2,6 @@
 import pandas as pd
 import networkx as nx
 import numpy as np
-# np.seterr(divide='ignore', invalid='ignore')    # for allowing divide by zero
-import matplotlib.pyplot as plt
 import scipy
 from scipy.sparse import csr_matrix
 import pickle
@@ -24,7 +22,10 @@ from helperMethods import *
 # ----------------------------------------
 def getNodeProperties(G):
     print('calculating degree')
-    df1 = pd.DataFrame.from_dict(dict(G.degree), orient='index', columns=['degree'])
+    temp_dict = dict(G.degree)
+    temp_max = max(temp_dict.values())
+    degree_regularized = {key: value / temp_max for key, value in temp_dict.items()}
+    df1 = pd.DataFrame.from_dict(degree_regularized, orient='index', columns=['degree'])
 
     print('calculating degree_centrality')
     df2 = pd.DataFrame.from_dict(nx.degree_centrality(G), orient='index', columns=['degree_centrality'])
@@ -33,11 +34,16 @@ def getNodeProperties(G):
     df3 = pd.DataFrame.from_dict(nx.clustering(G), orient='index', columns=['clustering_coefficient'])
 
     print('calculating eccentricity')
-    print("Is G connected? = ", nx.is_connected(G))
-    print("How many components? = ", nx.number_connected_components(G))
-    # returns list of nodes in different connected components
-    print(list(nx.connected_components(G)))
-    # df4 = pd.DataFrame.from_dict(nx.eccentricity(G), orient='index', columns=['eccentricity'])
+    print("Is G connected? = ", nx.is_connected(G), ". Then, How many components? = ", nx.number_connected_components(G))
+    graphs = list(G.subgraph(c) for c in nx.connected_components(G)) # returns a list of disconnected graphs as subgraphs
+    dict_1 = {}
+    for subgraph in graphs:
+        dict_2 = nx.eccentricity(subgraph)
+        dict_1 = {**dict_1,**dict_2}
+    max_ecc = max(dict_1.values())
+    ecc_regularized = {key: value / max_ecc for key, value in dict_1.items()}
+    df4 = pd.DataFrame.from_dict(ecc_regularized, orient='index', columns=['eccentricity'])
+    print(df4)
 
     print('calculating closeness_centrality')
     df5 = pd.DataFrame.from_dict(nx.closeness_centrality(G), orient='index', columns=['closeness_centrality'])
@@ -47,47 +53,33 @@ def getNodeProperties(G):
 
     print('done calculating node properties')
 
-    # return pd.concat([df1, df2, df3, df4, df5, df6], axis=1)
-    return pd.concat([df1, df2, df3, df5, df6], axis=1)
+    return pd.concat([df1, df2, df3, df4, df5, df6], axis=1)
 # ----------------------------------------
 
-# read edges and attributes from pickle (full dataset)
-# with open('pickles/edges.pickle', 'rb') as handle: data = pickle.load(handle)
-# with open('pickles/attributes.pickle', 'rb') as handle: y = pickle.load(handle) 
 
-# read edges from pickle (small dataset)
+# ----------------------------------------
+# Start by mentioning name of the dataset
+dataset = 'American75'
+
+
+# Read edges & attributes of testing graph from pickle (testing dataset (special case))
 # with open('pickles/playGraph_edges.pickle', 'rb') as handle: data = pickle.load(handle)  
 # with open('pickles/playGraph_attributes.pickle', 'rb') as handle: y = pickle.load(handle) 
+# G = nx.from_pandas_edgelist(data, 'From', 'To')
+
+# read edges of UNC28 from pickle (UNC28 dataset (special case))
+# with open('pickles/edges.pickle', 'rb') as handle: data = pickle.load(handle)  
+# with open('pickles/attributes.pickle', 'rb') as handle: y = pickle.load(handle) 
+# G = nx.from_pandas_edgelist(data, 'From', 'To')
+
+# Read any graph dataset with 'graphml' extension from 'Facebook100'
+read_file = 'Facebook100/fb100/' + dataset + '.graphml'
+G = nx.read_graphml(read_file)
 
 # generate features
-# G = nx.from_pandas_edgelist(data, 'From', 'To')
-# nodePropertiesDf = getNodeProperties(G)
-# adjDf = nx.to_pandas_adjacency(G)
-# featuresDf = pd.concat([adjDf, nodePropertiesDf], axis=1)
+nodePropertiesDf = getNodeProperties(G)
+print(nodePropertiesDf)
 
-# store generated features
-# with open('pickles/adj_and_property_features.pickle', 'wb') as handle: pickle.dump(featuresDf, handle, protocol=pickle.HIGHEST_PROTOCOL)
-
-# load generated features
-# with open('pickles/adj_and_property_features.pickle', 'rb') as handle: featuresDf = pickle.load(handle) 
-
-# y = y['Gender']
-# featuresDf.columns = featuresDf.columns.astype(str)
-
-# print(y.shape)
-# print(featuresDf.shape)
-
-# X_train, X_test, y_train, y_test = train_test_split(featuresDf, y, random_state=104, test_size=0.30, shuffle=True)
-
-# ----------------------------------------
-# Accuracy finding by svm method
-# print('running svm')
-# predicted_labels_svm = svmClassifier(X_train, X_test, y_train)
-# print('svm completed')
-
-# print("svm predicted labels:", predicted_labels_svm)
-# print("true labels:", y_test.tolist())
-
-# accuracy_svm = accuracyMeasurement(y_test.tolist(), predicted_labels_svm)
-# print("svm accuracy", accuracy_svm)
-# ----------------------------------------
+# store generated features of the dataset
+write_file = 'pickles/nodeProperties_' + dataset + '.pickle'
+with open(write_file, 'wb') as handle: pickle.dump(nodePropertiesDf, handle, protocol=pickle.HIGHEST_PROTOCOL)
