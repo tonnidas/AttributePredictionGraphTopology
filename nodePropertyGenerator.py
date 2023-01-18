@@ -66,17 +66,6 @@ def getNodeProperties(G):
 # Start by mentioning name of the dataset
 dataset = 'American75'
 
-
-# Read edges & attributes of testing graph from pickle (testing dataset (special case))
-# with open('pickles/playGraph_edges.pickle', 'rb') as handle: data = pickle.load(handle)  
-# with open('pickles/playGraph_attributes.pickle', 'rb') as handle: y = pickle.load(handle) 
-# G = nx.from_pandas_edgelist(data, 'From', 'To')
-
-# read edges of UNC28 from pickle (UNC28 dataset (special case))
-# with open('pickles/edges.pickle', 'rb') as handle: data = pickle.load(handle)  
-# with open('pickles/attributes.pickle', 'rb') as handle: y = pickle.load(handle) 
-# G = nx.from_pandas_edgelist(data, 'From', 'To')
-
 # Read any graph dataset with 'graphml' extension from 'Facebook100'
 read_file = 'Facebook100/fb100/' + dataset + '.graphml'
 G = nx.read_graphml(read_file)
