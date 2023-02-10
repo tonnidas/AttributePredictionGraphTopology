@@ -18,6 +18,22 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.svm import SVC
 from helperMethods import *
 
+# ----------------------------------------
+def eigen(G):
+    adj = nx.adjacency_matrix(G).todense()
+    print('Tonni: ', adj, adj.shape)
+    matrix1 = adj
+    matrix2 = np.ones(adj.shape[0])
+    print(matrix2)
+    # print('type(G) == nx.MultiGraph = ', type(G) == nx.MultiGraph)
+    tol = 0.0000010
+    max_iter = 1 # 100
+
+    for i in range(max_iter):
+
+        res = np.matmul(matrix1, matrix2)
+ 
+        print (res)
 
 # ----------------------------------------
 # Params:
@@ -56,8 +72,16 @@ def getNodeProperties(G):
     print('calculating betweenness_centrality')
     df6 = pd.DataFrame.from_dict(nx.betweenness_centrality(G), orient='index', columns=['betweenness_centrality'])
 
+    print('calculating eigenvector_centrality')
+    df7 = pd.DataFrame.from_dict(nx.eigenvector_centrality(G), orient='index', columns=['eigenvector_centrality'])
+
+    print('calculating self-defined eigenvector_centrality')
+    temp = eigen(G)
+    # df8 = pd.DataFrame.from_dict(temp, orient='index', columns=['eigenvector_centrality'])
+
+
     print('done calculating node properties')
-    features = pd.concat([df1, df2, df3, df4, df5, df6], axis=1)
+    features = pd.concat([df1, df2, df3, df4, df5, df6, df7], axis=1)
     return features
 # ----------------------------------------
 
@@ -67,13 +91,23 @@ def getNodeProperties(G):
 dataset = 'American75'
 
 # Read any graph dataset with 'graphml' extension from 'Facebook100'
-read_file = 'Facebook100/fb100/' + dataset + '.graphml'
+read_file = 'Facebook100/fb100/{dataset}.graphml'.format(dataset)
 G = nx.read_graphml(read_file)
+
+
+# Temporarily commented. Remove comment when 'generated_nodeProperties' collection done
+# --------------------------------------------
+# G_name = 'timepoint0_baseline_graph'
+# file_pickle = '{}.pickle'.format(G_name)
+# with open(file_pickle, 'rb') as handle: G = pickle.load(handle) 
+# --------------------------------------------
 
 # generate features
 nodePropertiesDf = getNodeProperties(G)
 print(nodePropertiesDf)
 
+
 # store generated features of the dataset
-write_file = 'pickles/nodeProperties_' + dataset + '.pickle'
+write_file = 'pickles/generated_nodeProperties/nodeProperties_{dataset}.pickle'.format(dataset)
 with open(write_file, 'wb') as handle: pickle.dump(nodePropertiesDf, handle, protocol=pickle.HIGHEST_PROTOCOL)
+# ----------------------------------------

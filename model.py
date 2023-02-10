@@ -16,6 +16,8 @@ from sklearn.svm import SVC
 from metrics import accuracyMeasurement, classification_metrics
 
 from sklearn.model_selection import RandomizedSearchCV
+
+from sklearn.preprocessing import LabelEncoder
 # ----------------------------------------
 
 
@@ -48,6 +50,7 @@ def randomForest_classifier(X_train, X_test, y_train, y_test):
     return predicted_labels_randomForest
 # ----------------------------------------
 
+# ----------------------------------------
 def randomForest_classifier_hyper(X_train, X_test, y_train, y_test):
     # Number of trees in random forest
     n_estimators = [int(x) for x in np.linspace(start = 10, stop = 1000, num = 100)]
@@ -91,11 +94,21 @@ def randomForest_classifier_hyper(X_train, X_test, y_train, y_test):
     print('Best Hyperparameters: %s' % rf_random.best_params_)
 
     return predicted_labels_test
+# ----------------------------------------
+
+# ----------------------------------------
+def neuralNetwork_Classifier(X_train, X_test, y_train, y_test):
+    encoder = LabelEncoder()                                      # encode class values as integers
+    encoder.fit(Y)
+    encoded_Y = encoder.transform(Y)
+    dummy_y = np_utils.to_categorical(encoded_Y)                  # convert integers to dummy variables (i.e. one hot encoded)
+# ----------------------------------------
 
 
-
-def predict_attribute(featuresDf, y, model, prediction_type):
-    X_train, X_test, y_train, y_test = train_test_split(featuresDf, y, random_state=2205, test_size=0.33, shuffle=True)
+# ----------------------------------------
+def predict_attribute(featuresDf, y, model, prediction_type, rand_state):
+    print(featuresDf.shape, y.shape)
+    X_train, X_test, y_train, y_test = train_test_split(featuresDf, y, random_state=rand_state, test_size=0.30, shuffle=True)
 
     predicted_labels = [0]
     if model == 'SVM':
@@ -110,4 +123,4 @@ def predict_attribute(featuresDf, y, model, prediction_type):
     print("acc: ", acc, "f1_macro: ", f1_macro, "precision_macro: ", precision_macro, "recall_macro: ", recall_macro, "f1_micro: ", f1_micro, "precision_micro: ", precision_micro, "recall_micro: ", recall_micro, "f1_weighted: ", f1_weighted, "adj_RI: ", adj_RI)
 
     return acc, f1_macro, precision_macro, recall_macro, f1_micro, precision_micro, recall_micro, f1_weighted, adj_RI
-
+# ----------------------------------------
