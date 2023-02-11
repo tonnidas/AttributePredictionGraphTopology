@@ -18,28 +18,12 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.svm import SVC
 from helperMethods import *
 
-# ----------------------------------------
-def eigen(G):
-    adj = nx.adjacency_matrix(G).todense()
-    print('Tonni: ', adj, adj.shape)
-    matrix1 = adj
-    matrix2 = np.ones(adj.shape[0])
-    print(matrix2)
-    # print('type(G) == nx.MultiGraph = ', type(G) == nx.MultiGraph)
-    tol = 0.0000010
-    max_iter = 1 # 100
-
-    for i in range(max_iter):
-
-        res = np.matmul(matrix1, matrix2)
- 
-        print (res)
 
 # ----------------------------------------
 # Params:
 #   G = networkx graph
 # Return values:
-#   features = all generated topological features (concatenated in a dataframe)
+#   features = six generated topological features (concatenated in a dataframe)
 # Generate degree, degree_centrality, clustering_coefficient, eccentricity, closeness_centrality, betweenness_centrality of G
 def getNodeProperties(G):
     print('calculating degree')
@@ -72,26 +56,63 @@ def getNodeProperties(G):
     print('calculating betweenness_centrality')
     df6 = pd.DataFrame.from_dict(nx.betweenness_centrality(G), orient='index', columns=['betweenness_centrality'])
 
-    print('calculating eigenvector_centrality')
-    df7 = pd.DataFrame.from_dict(nx.eigenvector_centrality(G), orient='index', columns=['eigenvector_centrality'])
-
-    print('calculating self-defined eigenvector_centrality')
-    temp = eigen(G)
-    # df8 = pd.DataFrame.from_dict(temp, orient='index', columns=['eigenvector_centrality'])
-
 
     print('done calculating node properties')
-    features = pd.concat([df1, df2, df3, df4, df5, df6, df7], axis=1)
+    features = pd.concat([df1, df2, df3, df4, df5, df6], axis=1)
     return features
 # ----------------------------------------
 
 
 # ----------------------------------------
+# Params:
+#   G = networkx graph
+# Return values:
+#   features = six generated topological features (concatenated in a dataframe)
+# Generate current_flow_closeness_centrality, current_flow_betweenness_centrality, eigenvector_centrality, Katz_centrality, communi_betweenness_centrality, load_centrality of G
+def getSecondPhaseNodeProperties(G):
+    print('calculating associated_cliques')
+    clique_dict =  nx.cliques_containing_node(G)
+    newClique_dict = {key: len(value) for key, value in clique_dict.items()}
+    # print("no of cliques = ", newc, type(newc))
+    df_clique_no = pd.DataFrame.from_dict(newClique_dict, orient='index', columns=['associated_cliques'])
+
+    print("calculating associated max clique length")
+    df_clique_size = pd.DataFrame.from_dict(nx.node_clique_number(G), orient='index', columns=['asso_max_clique_size'])
+
+    # print('calculating current_flow_closeness_centrality')
+    # df7 = pd.DataFrame.from_dict(nx.current_flow_closeness_centrality(G), orient='index', columns=['current_flow_closeness_centrality'])
+
+    # print('calculating current_flow_betweenness_centrality')
+    # df8 = pd.DataFrame.from_dict(nx.current_flow_betweenness_centrality(G), orient='index', columns=['current_flow_betweenness_centrality'])
+
+    print('calculating eigenvector_centrality')
+    df9 = pd.DataFrame.from_dict(nx.eigenvector_centrality(G), orient='index', columns=['eigenvector_centrality'])
+
+    print('calculating Katz_centrality')
+    df10 = pd.DataFrame.from_dict(nx.katz_centrality(G, 1 / max(nx.adjacency_spectrum(G)) - 0.01), orient='index', columns=['Katz_centrality'])
+    df10['Katz_centrality'] = np.real(df10.Katz_centrality)
+
+    # print('calculating communi_betweenness_centrality')
+    # df11 = pd.DataFrame.from_dict(nx.communicability_betweenness_centrality(G), orient='index', columns=['communi_betweenness_centrality'])
+
+    print('calculating load_centrality')
+    df12 = pd.DataFrame.from_dict(nx.load_centrality(G), orient='index', columns=['load_centrality'])
+
+
+    print('done calculating node properties')
+    features = pd.concat([df_clique_no, df_clique_size, df9, df10, df12], axis=1)
+
+    return features
+# ----------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+# ----------------------------------------------------------------------------------------------------------------------------------------------------------------
+
 # Start by mentioning name of the dataset
-dataset = 'American75'
+dataset = 'Amherst41'
 
 # Read any graph dataset with 'graphml' extension from 'Facebook100'
-read_file = 'Facebook100/fb100/{dataset}.graphml'.format(dataset)
+read_file = 'Facebook100/fb100/{}.graphml'.format(dataset)
 G = nx.read_graphml(read_file)
 
 
@@ -100,14 +121,21 @@ G = nx.read_graphml(read_file)
 # G_name = 'timepoint0_baseline_graph'
 # file_pickle = '{}.pickle'.format(G_name)
 # with open(file_pickle, 'rb') as handle: G = pickle.load(handle) 
+
+# edgelist = [(1,2), (3,4), (2,4), (4,5), (3,5), (6,7)]
+# G = nx.from_edgelist(edgelist)
 # --------------------------------------------
 
-# generate features
-nodePropertiesDf = getNodeProperties(G)
-print(nodePropertiesDf)
+# get the properties from both methods (temporary: as firstNodePropertiesDf is already calculated for some datasets)
+# with open('pickles/generated_nodeProperties_6d/nodeProperties_{}.pickle'.format(dataset), 'rb') as handle: firstNodePropertiesDf = pickle.load(handle)
+secondPhaseNodePropertiesDf = getSecondPhaseNodeProperties(G)
+# nodePropertiesDf = pd.concat([firstNodePropertiesDf, secondPhaseNodePropertiesDf], axis=1)
 
+
+# print(nodePropertiesDf)
+print(secondPhaseNodePropertiesDf)
 
 # store generated features of the dataset
-write_file = 'pickles/generated_nodeProperties/nodeProperties_{dataset}.pickle'.format(dataset)
-with open(write_file, 'wb') as handle: pickle.dump(nodePropertiesDf, handle, protocol=pickle.HIGHEST_PROTOCOL)
+# write_file = 'pickles/generated_nodeProperties/nodeProperties_{}.pickle'.format(dataset)
+# with open(write_file, 'wb') as handle: pickle.dump(nodePropertiesDf, handle, protocol=pickle.HIGHEST_PROTOCOL)
 # ----------------------------------------

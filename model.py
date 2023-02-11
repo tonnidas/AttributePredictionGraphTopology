@@ -13,7 +13,7 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.pipeline import make_pipeline
 from sklearn.preprocessing import StandardScaler
 from sklearn.svm import SVC
-from metrics import accuracyMeasurement, classification_metrics
+# from metrics import accuracyMeasurement, classification_metrics
 
 from sklearn.model_selection import RandomizedSearchCV
 
@@ -118,9 +118,6 @@ def predict_attribute(featuresDf, y, model, prediction_type, rand_state):
     if model == 'RandomForest_hyper':
         predicted_labels = randomForest_classifier_hyper(X_train, X_test, y_train, y_test)
 
-    if prediction_type == 'classification':
-        acc, f1_macro, precision_macro, recall_macro, f1_micro, precision_micro, recall_micro, f1_weighted, adj_RI = classification_metrics(y_test.tolist(), predicted_labels)
-    print("acc: ", acc, "f1_macro: ", f1_macro, "precision_macro: ", precision_macro, "recall_macro: ", recall_macro, "f1_micro: ", f1_micro, "precision_micro: ", precision_micro, "recall_micro: ", recall_micro, "f1_weighted: ", f1_weighted, "adj_RI: ", adj_RI)
-
-    return acc, f1_macro, precision_macro, recall_macro, f1_micro, precision_micro, recall_micro, f1_weighted, adj_RI
+    return y_test, predicted_labels
+    # return acc, f1_macro, precision_macro, recall_macro, f1_micro, precision_micro, recall_micro, f1_weighted, adj_RI
 # ----------------------------------------

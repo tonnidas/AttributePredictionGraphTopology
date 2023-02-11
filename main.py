@@ -6,47 +6,31 @@ import scipy
 from scipy.sparse import csr_matrix
 import pickle
 import os
-from constructor import get_settings
-from model import predict_attribute
-# ----------------------------------------
+
+from sknetwork.path.shortest_path import get_distances
+from typing import Union, Optional
+from scipy import sparse
+
+from sklearn.model_selection import train_test_split
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.pipeline import make_pipeline
+from sklearn.preprocessing import StandardScaler
+from sklearn.svm import SVC
+from helperMethods import *
+
+from config import do_category_specific_task_prediction
 
 
-# ----------------------------------------
-dataset = 'Amherst41'                           # 'playgraph' or 'UNC28' or 'American75'
-prediction_type = 'classification'                  # 'classification' or 'regression' 
-model = 'RandomForest_hyper'                              # 'SVM' or 'RandomForest' or 'RandomForest_hyper'
-predicting_attribute = 'gender'                     # 'student_fac' or 'gender' or 'major_index' or 'second_major' or 'dorm' or 'year' or 'high_school  ('Status' = 'student_fac')
-selected_features = '1'                             # '1' or '2' or '3' or '4' or '5' or '6' or '7' or '8'
-# Categories and their meaning in selected_features:
-    # '1' = Property + Adjacency  
-    # '2' = Features + Adjacency
-    # '3' = Features + Adjacency + Property
-    # '4' = Property + Embedding
-    # '5' = Features + Embedding
-    # '6' = Features + Embedding + Property
-    # '7' = Properties
-    # '8' = Properties + Features
-    # '9' = Features
+for j in range(3, 10):
+    res = do_category_specific_task_prediction('UNC28', 'classification', 'RandomForest_hyper', 'student_fac', str(j), 15)
+    fes = do_category_specific_task_prediction('UNC28', 'classification', 'RandomForest_hyper', 'gender', str(j), 15)
 
-rand_state_for_split = 15
-# ----------------------------------------
+    e_dict = dict()
+    matric_name = ['acc', 'f1_macro', 'precision_macro', 'recall_macro', 'f1_micro', 'precision_micro', 'recall_micro', 'f1_weighted', 'adj_RI']
+    for i in range(9):
+        e_dict[i] = [matric_name[i], round(res[i], 6), round(fes[i], 6)]
 
-# ----------------------------------------
-    # def __init__(self, dataset, prediction_type, model, predicting_attribute, selected_features, rand_state_for_split):
-    #     self.dataset = dataset
-    #     self.prediction_type = prediction_type
-    #     self.model = model
-    #     self.predicting_attribute = predicting_attribute
-    #     self.selected_features = selected_features
-    #     self.rand_state_for_split = rand_state_for_split 
-# ----------------------------------------
-
-# ----------------------------------------
-    # @staticmethod
-def do(dataset, prediction_type, model, predicting_attribute, selected_features, rand_state_for_split):
-    featuresDf, y = get_settings(dataset, predicting_attribute, prediction_type, selected_features)
-    print("Featurs and y collected ___________________________ ")
-    # result = predict_attribute(featuresDf, y, model, prediction_type, rand_state_for_split)
-
-    return predict_attribute(featuresDf, y, model, prediction_type, rand_state_for_split)
-# ----------------------------------------
+    resDf = pd.DataFrame.from_dict(e_dict, orient='index')
+    f = 'result_' + str(j) + '.xlsx'
+    resDf.to_excel(f) 
+    print(resDf)
