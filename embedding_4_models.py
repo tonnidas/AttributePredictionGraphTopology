@@ -440,7 +440,7 @@ def train_and_evaluate(data_name, nodes_list, embedding, name, graph_train, exam
         embDict[node] = embedding_train(node)
 
     embDf = pd.DataFrame.from_dict(embDict, orient='index')
-    emb_file = 'pickles/generated_embeddings/embedding_' + data_name + '.pickle'
+    emb_file = 'pickles/generated_embeddings/' + name + '_' + data_name + '.pickle'
     with open(emb_file, 'wb') as handle: pickle.dump(embDf, handle, protocol=pickle.HIGHEST_PROTOCOL)
     print(embDf)
 

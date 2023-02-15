@@ -9,8 +9,6 @@ import pickle
 import stellargraph as sg
 import os
 from stellargraph import StellarGraph, datasets
-
-import matplotlib.pyplot as plt
 from math import isclose
 from sklearn.decomposition import PCA
 
@@ -18,14 +16,11 @@ from embedding_4_models import run
 
 
 data_name = 'American75'
-graph_file = data_name + '.graphml'
-nxGraph = nx.read_graphml(graph_file)                                                             # Read the graph from 'Facebook100' folder    
-
+nxGraph = nx.read_graphml(data_name + '.graphml')  # Read the graph from 'Facebook100' folder    
 nodes_list = list(nxGraph.nodes)
 
 # make StellarGraph from nx graph
 sgGraph = StellarGraph.from_networkx(nxGraph, node_type_default="people", edge_type_default="friendship", node_features="feature")
-
 outputDf = run(data_name, nodes_list, data_name, sgGraph, 42)
 
 outputFileName = "{}_{}_hop_{}.txt".format(data_name, 42, 0)
