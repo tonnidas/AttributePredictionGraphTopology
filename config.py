@@ -18,19 +18,22 @@ dataset = 'Amherst41'                           # 'playgraph' or 'UNC28' or 'Ame
 prediction_type = 'classification'                  # 'classification' or 'regression' 
 model = 'RandomForest_hyper'                              # 'SVM' or 'RandomForest' or 'RandomForest_hyper'
 predicting_attribute = 'gender'                     # 'student_fac' or 'gender' or 'major_index' or 'second_major' or 'dorm' or 'year' or 'high_school  ('Status' = 'student_fac')
-selected_features = '1'                             # '1' or '2' or '3' or '4' or '5' or '6' or '7' or '8'
+selected_features = 'pro_adj'                             # 'pro_adj', 'fea_adj', 'fea_adj_pro', 'pro_emb', 'fea_emb', 'fea_emb_pro', 'pro', 'pro_fea', 'fea', 'adj', 'emb'
 # Categories and their meaning in selected_features:
-    # '1' = Property + Adjacency  
-    # '2' = Features + Adjacency
-    # '3' = Features + Adjacency + Property
-    # '4' = Property + Embedding
-    # '5' = Features + Embedding
-    # '6' = Features + Embedding + Property
-    # '7' = Properties
-    # '8' = Properties + Features
-    # '9' = Features
+    # 'pro_adj'      = Property + Adjacency  
+    # 'fea_adj'      = Features + Adjacency
+    # 'fea_adj_pro'  = Features + Adjacency + Property
+    # 'pro_emb'      = Property + Embedding
+    # 'fea_emb'      = Features + Embedding
+    # 'fea_emb_pro'  = Features + Embedding + Property
+    # 'pro'          = Properties
+    # 'pro_fea'      = Properties + Features
+    # 'fea'          = Features
+    # 'adj'          = Adjacency
+    # 'emb'          = Embedding
 
 rand_state_for_split = 15
+embedding = 'Node2Vec'
 # ----------------------------------------
 
 # ----------------------------------------
@@ -52,9 +55,9 @@ rand_state_for_split = 15
 #   f1_weighted             = a float
 #   adj_RI                  = a float
 # def get_settings(dataset_attributes, dataset_edges, model, predicting_attribute, prediction_type, selected_features):
-def do_category_specific_task_prediction(dataset, prediction_type, model, predicting_attribute, selected_features, rand_state_for_split):
+def do_category_specific_task_prediction(dataset, prediction_type, model, predicting_attribute, selected_features, rand_state_for_split, embedding):
     # Get features and labels
-    featuresDf, y = get_settings(dataset, predicting_attribute, prediction_type, selected_features)
+    featuresDf, y = get_settings(dataset, predicting_attribute, prediction_type, selected_features, embedding)
     print("Featurs and y collected ___________________________ ")
     # result = predict_attribute(featuresDf, y, model, prediction_type, rand_state_for_split)
 

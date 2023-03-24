@@ -14,17 +14,40 @@ from sklearn.decomposition import PCA
 
 from embedding_4_models import run
 
+# ----------------------------------------------------------------------------------------------------------------------------------------------------------------
+# ----------------------------------------------------------------------------------------------------------------------------------------------------------------
+import argparse
+parser = argparse.ArgumentParser()
 
-data_name = 'American75'
-nxGraph = nx.read_graphml(data_name + '.graphml')  # Read the graph from 'Facebook100' folder    
+parser.add_argument('--dataset')
+parser.add_argument('--embedding')
+
+args = parser.parse_args()
+print('Arguments:', args)
+# ----------------------------------------------------------------------------------------------------------------------------------------------------------------
+# ----------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+data_name = args.dataset   # 'American75'
+embedding = args.embedding # 'Node2vec'
+
+
+# ----------------------------------------------------------------------------------------------------------------------------------------------------------------
+# ----------------------------------------------------------------------------------------------------------------------------------------------------------------
+print('Generate ' + embedding + ' embedding for dataset = ' + data_name + '.')
+
+graph_file = 'Facebook100/fb100/' + data_name + '.graphml'
+nxGraph = nx.read_graphml(graph_file)  # Read the graph from 'Facebook100' folder    
 nodes_list = list(nxGraph.nodes)
 
 # make StellarGraph from nx graph
 sgGraph = StellarGraph.from_networkx(nxGraph, node_type_default="people", edge_type_default="friendship", node_features="feature")
-outputDf = run(data_name, nodes_list, data_name, sgGraph, 42)
+outputDf = run(embedding, data_name, nodes_list, data_name, sgGraph, 42)
 
-outputFileName = "{}_{}_hop_{}.txt".format(data_name, 42, 0)
+outputFileName = "Result/Embedding_scores/{}_{}_roc_auc.txt".format(embedding, data_name)
 f1 = open(outputFileName, "w")
 f1.write("For data_name: {}, split: {}, hop: {} \n".format(data_name, 42, 0))
 f1.write(outputDf.to_string())
 f1.close()
+# ----------------------------------------------------------------------------------------------------------------------------------------------------------------
+# ----------------------------------------------------------------------------------------------------------------------------------------------------------------

@@ -471,7 +471,7 @@ def train_and_evaluate(data_name, nodes_list, embedding, name, graph_train, exam
 
 
 # ===========================================================================================
-def run(data_name, nodes_list, graph_name, graph, rand_state, walk_length=5, epochs=10, batch_size=50):
+def run(embedding, data_name, nodes_list, graph_name, graph, rand_state, walk_length=5, epochs=10, batch_size=50):
 
     print(graph.info())
 
@@ -534,32 +534,40 @@ def run(data_name, nodes_list, graph_name, graph, rand_state, walk_length=5, epo
     batch_size = batch_size   # batch_size = 50
 
     # Collect the link prediction results for Node2Vec, Attri2Vec, GraphSAGE and GCN
-    # Get Node2Vec link prediction result
-    print("############ -- Getting node2vec results -- ###############")
-    node2vec_result = train_and_evaluate(data_name, nodes_list, node2vec_embedding, "Node2Vec", graph_train, examples_train, labels_train, examples_model_selection, labels_model_selection, examples_test, labels_test, walk_length, batch_size, epochs)
-    print("############ -- Done node2vec results -- ###############")
+    if embedding == 'Node2Vec':
+        # Get Node2Vec link prediction result
+        print("############ -- Getting node2vec results -- ###############")
+        result = train_and_evaluate(data_name, nodes_list, node2vec_embedding, "Node2Vec", graph_train, examples_train, labels_train, examples_model_selection, labels_model_selection, examples_test, labels_test, walk_length, batch_size, epochs)
+        print("############ -- Done node2vec results -- ###############")
 
-    # # Get Attri2Vec link prediction result
-    # print("############ -- Getting attri2vec results -- ###############")
-    # attri2vec_result = train_and_evaluate(attri2vec_embedding, "Attri2Vec", graph_train, examples_train, labels_train, examples_model_selection, labels_model_selection, examples_test, labels_test, walk_length, batch_size, epochs)
-    # print("############ -- Done attri2vec results -- ###############")
+    elif embedding == 'Attri2Vec':
+        # Get Attri2Vec link prediction result
+        print("############ -- Getting attri2vec results -- ###############")
+        result = train_and_evaluate(attri2vec_embedding, "Attri2Vec", graph_train, examples_train, labels_train, examples_model_selection, labels_model_selection, examples_test, labels_test, walk_length, batch_size, epochs)
+        print("############ -- Done attri2vec results -- ###############")
 
-    # # Get GraphSAGE link prediction result
-    # print("############ -- Getting GraphSage results -- ###############")
-    # graphsage_result = train_and_evaluate(graphsage_embedding, "GraphSAGE", graph_train, examples_train, labels_train, examples_model_selection, labels_model_selection, examples_test, labels_test, walk_length, batch_size, epochs)
-    # print("############ -- Done GraphSage results -- ###############")
+    elif embedding == 'GraphSAGE':
+        # Get GraphSAGE link prediction result
+        print("############ -- Getting GraphSage results -- ###############")
+        result = train_and_evaluate(graphsage_embedding, "GraphSAGE", graph_train, examples_train, labels_train, examples_model_selection, labels_model_selection, examples_test, labels_test, walk_length, batch_size, epochs)
+        print("############ -- Done GraphSage results -- ###############")
 
-    # # Get GCN link prediction result
-    # print("############ -- Getting GCN results -- ###############")
-    # gcn_result = train_and_evaluate(gcn_embedding, "GCN", graph_train, examples_train, labels_train, examples_model_selection, labels_model_selection, examples_test, labels_test, walk_length, batch_size, epochs)
-    # print("############ -- Done GCN results -- ###############")
+    elif embedding == 'GCN':
+        # Get GCN link prediction result
+        print("############ -- Getting GCN results -- ###############")
+        result = train_and_evaluate(gcn_embedding, "GCN", graph_train, examples_train, labels_train, examples_model_selection, labels_model_selection, examples_test, labels_test, walk_length, batch_size, epochs)
+        print("############ -- Done GCN results -- ###############")
+
+    else: 
+        print('Invalid embedding model name = ', embedding)
+        exit(1)
 
     # Comparison between Node2Vec, Attri2Vec, GraphSAGE and GCN on the test set
     # The ROC AUC scores on the test set of links of different embeddings with their corresponding best operators:
 
     df = pd.DataFrame(
         [
-            ("Node2Vec", node2vec_result[0], node2vec_result[1])
+            (embedding, result[0], result[1])
             # ,
             # ("Attri2Vec", attri2vec_result[0], attri2vec_result[1]),
             # ("GraphSAGE", graphsage_result[0], graphsage_result[1]),
