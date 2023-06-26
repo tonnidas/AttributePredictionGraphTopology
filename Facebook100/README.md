@@ -1,1 +1,0 @@
-# Social Network Analysis with the Facebook100 Dataset
