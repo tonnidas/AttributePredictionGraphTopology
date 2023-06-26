@@ -1,4 +1,0 @@
-For data_name: Auburn71, split: 42, hop: 0 
-          ROC score  AP score
-name                         
-Node2Vec   0.866505  0.861175
