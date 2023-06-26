@@ -14,7 +14,7 @@ from metrics import accuracyMeasurement, classification_metrics
 
 
 # ----------------------------------------
-dataset = 'Amherst41'                           # 'playgraph' or 'UNC28' or 'American75' or 'Amherst41'
+dataset = 'Amherst41'                           # 'playgraph' or 'UNC28' or 'American75' or 'Amherst41' or 'Auburn71' or 'Baylor93' or 'Berkeley13' or 'Bingham82' or 'Bowdoin47' or 'Brandeis99' or 'Brown11' or 'BU10'
 prediction_type = 'classification'                  # 'classification' or 'regression' 
 model = 'RandomForest_hyper'                              # 'SVM' or 'RandomForest' or 'RandomForest_hyper'
 predicting_attribute = 'gender'                     # 'student_fac' or 'gender' or 'major_index' or 'second_major' or 'dorm' or 'year' or 'high_school  ('Status' = 'student_fac')

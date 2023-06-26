@@ -105,26 +105,34 @@ parser.add_argument('--dataset')
 
 args = parser.parse_args()
 print('Arguments:', args)
-# ----------------------------------------------------------------------------------------------------------------------------------------------------------------
-# ----------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-
+dataset = args.dataset # 'Baylor93', 'Bowdoin47'
+# python nodePropertyGenerator.py --dataset=Bowdoin47
 # ----------------------------------------------------------------------------------------------------------------------------------------------------------------
 # ----------------------------------------------------------------------------------------------------------------------------------------------------------------
-# Start by mentioning name of the dataset
-dataset = args.dataset # 'Baylor93'
 
 print('Generating node properties for dataset = ' + dataset + '.')
 
-read_file = 'Facebook100/fb100/{}.graphml'.format(dataset)        # Read any graph dataset with 'graphml' extension from 'Facebook100'
-G = nx.read_graphml(read_file)                                    # G = nx.from_edgelist([(1,2), (3,4), (2,4), (4,5), (3,5), (6,7)])
+# read_file = 'Facebook100/fb100/{}.graphml'.format(dataset)        # Read any graph dataset with 'graphml' extension from 'Facebook100'
+# G = nx.read_graphml(read_file)                                    # G = nx.from_edgelist([(1,2), (3,4), (2,4), (4,5), (3,5), (6,7)])
+with open('../graph-data/Facebook100/Processed/{}_featuresDf_hop_{}.pickle'.format(dataset, str(0)), 'rb') as handle: features = pickle.load(handle) 
+with open('../graph-data/Facebook100/Processed/{}_adjDf_hop_{}.pickle'.format(dataset, str(0)), 'rb') as handle: adj = pickle.load(handle)
+features['year'] = pd.to_numeric(features['year'], errors='coerce')     # convert pval to float and use NaN for non numeric values
+# filter rows with unavailable 'year' values 
+to_be_filtered = features.index[features['year'] == 0].tolist()
+for i in to_be_filtered: 
+    adj = adj.drop(i, axis=1)
+    adj = adj.drop(i)
+adj = adj.reset_index(drop=True)
+adj = csr_matrix(adj.to_numpy())
+G = nxGraph = nx.from_scipy_sparse_array(adj) 
 
 # get the properties from both methods 
-nodePropertiesDf = getSecondPhaseNodeProperties(G)
+nodePropertiesDf = getNodeProperties(G)
 print('Size of the nodeproperty dataframe = ', len(nodePropertiesDf), nodePropertiesDf)
 
 # store generated features of the dataset
-write_file = 'pickles/generated_nodeProperties/nodeProperties_{}.pickle'.format(dataset)
+write_file = 'pickles/generated_nodeProperties/nodeProperties_{}_special.pickle'.format(dataset)
 with open(write_file, 'wb') as handle: pickle.dump(nodePropertiesDf, handle, protocol=pickle.HIGHEST_PROTOCOL)
 # ----------------------------------------------------------------------------------------------------------------------------------------------------------------
 # ----------------------------------------------------------------------------------------------------------------------------------------------------------------
